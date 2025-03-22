@@ -19,21 +19,18 @@ a:hover {
     word-wrap: break-word; /* Breaks long words to fit within the container */
 }
 
-.typing {
-    white-space: pre; /* Preserve whitespace */
-    overflow: hidden; /* Hide the overflow */
+.cursor::after {
+    content: ''; /* Empty content for cursor */
     border-right: .15em solid #00ff00; /* Cursor */
     animation: blink-caret .75s step-end infinite;
 }
 
-.typing-active {
-    border-right: .15em solid #00ff00; /* Cursor */
-    animation: blink-caret .75s step-end infinite;
+.typing-cursor {
+    border-right: .15em solid #00ff00; /* Typing cursor */
 }
 
-.typing:not(.typing-active) {
-    border-right: none; /* Remove cursor */
-    animation: none; /* Stop blinking */
+ul {
+    list-style: none; /* Remove default list style */
 }
 
 @keyframes blink-caret {
