@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function typeText(element, text, index, speed, callback) {
         if (index < text.length) {
-            element.innerHTML = text.substring(0, index + 1) + '<span class="typing-cursor">_</span>';
+            element.innerHTML = text.substring(0, index + 1) + '<span class="typing-cursor"></span>';
             setTimeout(() => typeText(element, text, index + 1, speed, callback), speed);
         } else {
             element.innerHTML = text; // Remove the cursor after typing
@@ -23,11 +23,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function typeRemainingElements() {
         if (currentElementIndex < elements.length - 1) {
+            const previousElement = elements[currentElementIndex];
             currentElementIndex++;
-            const speed = elements[currentElementIndex].closest("#startup-message") ? 5 : 30;
+            const speed = elements[currentElementIndex].closest("#startup-message") ? 5 : 40;
+            previousElement.innerHTML = previousElement.textContent; // Remove cursor from previous line
             startTyping(elements[currentElementIndex], speed, typeRemainingElements);
         } else {
-            elements[currentElementIndex].innerHTML += '<span class="typing-block"></span>'; // Blinking cursor at the end
+            elements[currentElementIndex].innerHTML += '<span class="typing-cursor"></span>'; // Blinking cursor at the end
             if (document.querySelector("#boot-screen")) {
                 setTimeout(() => {
                     window.location.href = "Home.html"; // Switch to home after boot-up
@@ -42,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (elements.length > 0) {
-        const initialSpeed = elements[currentElementIndex].closest("#startup-message") ? 5 : 30;
+        const initialSpeed = elements[currentElementIndex].closest("#startup-message") ? 5 : 40;
         startTyping(elements[currentElementIndex], initialSpeed, typeRemainingElements);
     }
 
