@@ -11,7 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (element.parentElement.tagName === 'A') {
                 element.parentElement.parentElement.style.listStyle = 'disc'; // Add dots after typing
             }
-            if (callback) callback();
+            if (callback) {
+                const isStartupMessage = element.closest("#startup-message");
+                const isLastElement = currentElementIndex === elements.length - 1;
+                const isLastStartupMessage = isStartupMessage && element.textContent.includes("C:\\Google\\Github\\https://anthony-de-hoog.github.io/");
+                const pauseDuration = isLastStartupMessage || (!isStartupMessage && !isLastElement) ? 850 : 0; // Pause for the last line of startup-message and other texts
+                setTimeout(callback, pauseDuration);
+            }
         }
     }
 
@@ -25,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (currentElementIndex < elements.length - 1) {
             const previousElement = elements[currentElementIndex];
             currentElementIndex++;
-            const speed = elements[currentElementIndex].closest("#startup-message") ? 5 : 40;
+            const speed = elements[currentElementIndex].closest("#startup-message") ? 5 : 21;
             previousElement.innerHTML = previousElement.textContent; // Remove cursor from previous line
             startTyping(elements[currentElementIndex], speed, typeRemainingElements);
         } else {
@@ -44,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (elements.length > 0) {
-        const initialSpeed = elements[currentElementIndex].closest("#startup-message") ? 5 : 40;
+        const initialSpeed = elements[currentElementIndex].closest("#startup-message") ? 5 : 21;
         startTyping(elements[currentElementIndex], initialSpeed, typeRemainingElements);
     }
 

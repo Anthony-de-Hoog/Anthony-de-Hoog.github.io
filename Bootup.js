@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
             previousElement.innerHTML = previousElement.textContent; // Remove cursor from previous line
             startTyping(elements[currentElementIndex], 80, typeRemainingElements);
         } else {
-            elements[currentElementIndex].innerHTML += '<span class="typing-cursor"></span>';
             setTimeout(() => {
                 window.location.href = "Home.html";
             }, 2000);
