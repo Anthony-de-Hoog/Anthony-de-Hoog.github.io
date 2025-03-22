@@ -1,29 +1,39 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const elements = document.querySelectorAll(".typing span");
     let currentElementIndex = 0;
 
-    function type(element, text, index) {
+    function typeText(element, text, index, speed, callback) {
         if (index < text.length) {
-            element.innerHTML = text.substring(0, index + 1) + '<span class="typing-cursor">|</span>';
-            setTimeout(() => type(element, text, index + 1), 20); // Adjusted typing speed here
+            element.innerHTML = text.substring(0, index + 1) + '<span class="typing-cursor">_</span>';
+            setTimeout(() => typeText(element, text, index + 1, speed, callback), speed);
         } else {
-            element.innerHTML = text; // Remove typing cursor after typing is done
+            element.innerHTML = text; // Remove the cursor after typing
             if (element.parentElement.tagName === 'A') {
-                element.parentElement.parentElement.style.listStyle = 'disc'; // Add dots when typing is done
+                element.parentElement.parentElement.style.listStyle = 'disc'; // Add dots after typing
             }
-            if (currentElementIndex < elements.length - 1) {
-                currentElementIndex++;
-                startTyping(elements[currentElementIndex]);
-            } else {
-                element.innerHTML = text + '<span class="cursor"></span>'; // Add blinking cursor to the last element
-            }
+            if (callback) callback();
         }
     }
 
-    function startTyping(element) {
+    function startTyping(element, speed, callback) {
         const text = element.getAttribute("data-text");
-        element.innerHTML = ''; // Clear the element content
-        type(element, text, 0);
+        element.innerHTML = ""; // Clear the content
+        typeText(element, text, 0, speed, callback);
+    }
+
+    function typeRemainingElements() {
+        if (currentElementIndex < elements.length - 1) {
+            currentElementIndex++;
+            const speed = elements[currentElementIndex].closest("#startup-message") ? 5 : 30;
+            startTyping(elements[currentElementIndex], speed, typeRemainingElements);
+        } else {
+            elements[currentElementIndex].innerHTML += '<span class="typing-block"></span>'; // Blinking cursor at the end
+            if (document.querySelector("#boot-screen")) {
+                setTimeout(() => {
+                    window.location.href = "Home.html"; // Switch to home after boot-up
+                }, 2000); // Wait 2 seconds after typing is done
+            }
+        }
     }
 
     elements.forEach(element => {
@@ -32,6 +42,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     if (elements.length > 0) {
-        startTyping(elements[currentElementIndex]);
+        const initialSpeed = elements[currentElementIndex].closest("#startup-message") ? 5 : 30;
+        startTyping(elements[currentElementIndex], initialSpeed, typeRemainingElements);
+    }
+
+    if (document.querySelector("#main-content")) {
+        document.getElementById("main-content").style.display = "block"; // Show the main content
     }
 });

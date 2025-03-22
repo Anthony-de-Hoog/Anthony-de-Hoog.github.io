@@ -26,14 +26,49 @@ a:hover {
 }
 
 .typing-cursor {
-    border-right: .15em solid #00ff00; /* Typing cursor */
+    display: inline-block;
+    width: 10px;
+    height: 18px;
+    background-color: #00ff00;
+    animation: blink-caret 0.6s infinite;
 }
+
+@keyframes blink-caret {
+    50% { background-color: transparent; }
+}
+
 
 ul {
     list-style: none; /* Remove default list style */
 }
 
-@keyframes blink-caret {
-    from, to { border-color: transparent; }
-    50% { border-color: #00ff00; }
+.typing-block {
+    display: inline-block;
+    width: 8px; /* Pas aan voor een bredere of smallere cursor */
+    height: 16px; /* Hoogte van de blokcursor */
+    background-color: #00ff00; /* Zelfde kleur als de tekst */
+    animation: blink-block 1s step-end infinite;
+}
+
+@keyframes blink-block {
+    from, to { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.typing a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.typing a:hover {
+    text-decoration: underline;
+}
+
+.typing-dot {
+    animation: blink-dot 1s step-end infinite;
+}
+
+@keyframes blink-dot {
+    from, to { opacity: 0; }
+    50% { opacity: 1; }
 }
