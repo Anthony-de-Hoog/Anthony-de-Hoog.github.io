@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => type(element, text, index + 1), 20); // Adjusted typing speed here
         } else {
             element.innerHTML = text; // Remove typing cursor after typing is done
+            if (element.parentElement.tagName === 'A') {
+                element.parentElement.parentElement.style.listStyle = 'disc'; // Add dots when typing is done
+            }
             if (currentElementIndex < elements.length - 1) {
                 currentElementIndex++;
                 startTyping(elements[currentElementIndex]);
