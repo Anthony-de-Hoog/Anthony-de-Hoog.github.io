@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (element.parentElement.tagName === 'A') {
                 element.parentElement.parentElement.style.listStyle = 'disc';
             }
-
             if (callback) {
                 const isStartupMessage = element.closest("#startup-message");
                 const isLastElement = currentElementIndex === elements.length - 1;
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 setTimeout(() => {
                     callback();
 
-                    // Check if this is the last element inside its .project div
                     const projectDiv = element.closest(".project");
                     if (projectDiv) {
                         const lastTypingElement = projectDiv.querySelector(".typing span:last-of-type");
@@ -55,6 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.href = "Home.html";
                 }, 100);
             }
+            // Reveal the command prompt and input field after the typing effect
+            document.getElementById("command-prompt").style.visibility = "visible";
+            document.getElementById("command-input").style.visibility = "visible";
         }
     }
 
@@ -64,17 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Hide image initially
-        imgElement.style.display = "none"; // Now the image is completely hidden on page load
+        imgElement.style.display = "none";
 
         const container = imgElement.parentElement;
         const loadingText = document.createElement("div");
         loadingText.textContent = "Uploading image █░░░░░░░░░ 10%";
-        loadingText.style.color = "#00ff00"; // Match the green theme
-        loadingText.style.marginTop = "10px"; // Adjust spacing
-        loadingText.style.fontSize = "14px"; // Ensure it's readable
+        loadingText.style.color = "#00ff00";
+        loadingText.style.marginTop = "10px";
+        loadingText.style.fontSize = "14px";
 
-        // Insert loading animation **where the image is**
+
         imgElement.before(loadingText);
 
         let imgTest = new Image();
@@ -88,8 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     clearInterval(interval);
                     setTimeout(() => {
                         loadingText.remove();
-
-                        // Show the image without fading in
                         imgElement.style.display = "block";
                         imgElement.style.opacity = "1";
                         imgElement.style.transform = "translateY(0)";
@@ -117,4 +115,36 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.querySelector("#main-content")) {
         document.getElementById("main-content").style.display = "block";
     }
+
+    // Terminal input handling
+    const commandInput = document.getElementById("command-input");
+    const commandSuggestions = document.getElementById("command-suggestions");
+
+    commandInput.addEventListener("keydown", function (event) {
+        if (event.key === "/") {
+            commandSuggestions.style.display = "block";
+        } else if (event.key === "Enter") {
+            const command = commandInput.value.trim().toLowerCase();
+            switch (command) {
+                case "home":
+                    window.location.href = "Home.html";
+                    break;
+                case "about me":
+                    window.location.href = "AboutMe.html";
+                    break;
+                case "projects":
+                    window.location.href = "Projecten.html";
+                    break;
+                case "contact":
+                    window.location.href = "Contact.html";
+                    break;
+                default:
+                    alert("Unknown command: " + command);
+            }
+            commandInput.value = "";
+            commandSuggestions.style.display = "none";
+        } else {
+            commandSuggestions.style.display = "none";
+        }
+    });
 });

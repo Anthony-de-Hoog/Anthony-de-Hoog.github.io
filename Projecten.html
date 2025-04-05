@@ -13,15 +13,8 @@
     <span>C:\Google\Github\https://anthony-de-hoog.github.io/Projecten.html></span><br>
     <span></span><br>
 </div>
-<h1 class="typing"><span>Hello world, Projecten </span></h1>
-<nav>
-    <ul>
-        <li class="typing"><a href="Home.html"><span>Home </span></a></li>
-        <li class="typing"><a href="AboutMe.html"><span>About Me </span></a></li>
-        <li class="typing"><a href="Projecten.html"><span>Projecten </span></a></li>
-        <li class="typing"><a href="Contact.html"><span>Contact </span></a></li>
-    </ul>
-</nav>
+<h1 class="typing"><span>Projects </span></h1>
+
 
 <div class="project typing">
     <h2><span>Operation Starfal </span></h2>
@@ -30,9 +23,15 @@
 </div>
 
 <div class="project typing">
-    <h2><span>This Website</span></h2>
-    <img src="Website photos/Terminal.png" alt="Screenshot of the index page of this website">
-    <p><span>This is of course the website you're on right now, but doesn't mean it isn't a project I am proud of. I don't work often with HTML, but that I managed to make this website is an achievement for me.</span></p>
+    <h2><span>Tower Defence</span></h2>
+    <img src="Website photos/Tower Defence.png" alt="Screenshot of my Tower Defence game">
+    <p><span>This project was a college assignment where we had about 8 weeks to independently make a Tower Defense game.</span></p>
+</div>
+
+<div class="project typing">
+    <h2><span>Mathematics</span></h2>
+    <img src="Website photos/Space.png" alt="Screenshot of the earth and moon">
+    <p><span>This is something I made to see if I can use math to create mathematically correct scenarios using physics to make the scenarios as realistic as possible.</span></p>
 </div>
 
 <div class="project typing">
@@ -41,6 +40,33 @@
     <p><span>For the Vertical Slice project we had to choose which game we have to remake a chosen 15 seconds clip. some other people and me and chose for Darkest Dungeon.</span></p>
 </div>
 
+<nav>
+    <ul>
+        <li class="typing"><a href="Home.html"><span>Home </span></a></li>
+        <li class="typing"><a href="AboutMe.html"><span>About Me </span></a></li>
+        <li class="typing"><a href="Projecten.html"><span>Projects </span></a></li>
+        <li class="typing"><a href="Contact.html"><span>Contact </span></a></li>
+        <li class="typing"><a href="Vertical Slice.html"><span>Vertical Slice </span></a></li>
+        <li class="typing"><a href="Mathematics.html"><span>Math </span></a></li>
+        <li class="typing"><a href="Tower_Defence.html"><span>Tower Defence </span></a></li>
+        <li class="typing"><a href="Operation Starfall.html"><span>Operation Starfall </span></a></li>
+    </ul>
+</nav>
+
+<!-- Add this at the bottom of the body tag in both index.html and Projecten.html -->
+<div id="terminal-input">
+    <span id="command-prompt" style="visibility: hidden;">C:\></span>
+    <input type="text" id="command-input" placeholder="Type command here..." style="visibility: hidden;">
+</div>
+<!-- Add this below the terminal input in both index.html and Home.html -->
+<div id="command-suggestions" style="display: none;">
+    <ul>
+        <li>home</li>
+        <li>about me</li>
+        <li>projects</li>
+        <li>contact</li>
+    </ul>
+</div>
 <script src="matrix.js"></script>
 </body>
 </html>

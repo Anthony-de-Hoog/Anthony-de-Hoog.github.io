@@ -19,16 +19,10 @@ a:hover {
     word-wrap: break-word; /* Breaks long words to fit within the container */
 }
 
-.cursor::after {
-    content: ''; /* Empty content for cursor */
-    border-right: .15em solid #00ff00; /* Cursor */
-    animation: blink-caret .75s step-end infinite;
-}
-
 .typing-cursor {
     display: inline-block;
-    width: 10px;
-    height: 18px;
+    width: 10px; /* Set to desired width for typing cursor */
+    height: 18px; /* Set to desired height */
     background-color: #00ff00;
     animation: blink-caret 0.6s infinite;
 }
@@ -39,19 +33,6 @@ a:hover {
 
 ul {
     list-style: none; /* Remove default list style */
-}
-
-.typing-block {
-    display: inline-block;
-    width: 8px; /* Pas aan voor een bredere of smallere cursor */
-    height: 16px; /* Hoogte van de blokcursor */
-    background-color: #00ff00; /* Zelfde kleur als de tekst */
-    animation: blink-block 1s step-end infinite;
-}
-
-@keyframes blink-block {
-    from, to { opacity: 0; }
-    50% { opacity: 1; }
 }
 
 .typing a {
@@ -77,11 +58,69 @@ ul {
     margin-bottom: 50px; /* Add space between projects */
 }
 
-/* Removed fade-in effect for images */
+/* Add this to Fashion.css if not already present */
 .project img {
+    height: auto;
+    max-height: 411px; /* Adjust as needed */
+    transition: transform 0.5s ease, opacity 0.5s ease;
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
+}
+
+.project img.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#terminal-input {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#terminal-input span {
+    margin-right: 10px;
+}
+
+#command-input {
+    background-color: #000;
+    color: #00ff00;
+    border: none;
+    outline: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    width: 300px;
+    caret-color: #00ff00; /* Custom cursor color */
+    caret-width: 1000px; /* Custom width for the caret */
+}
+
+#command-suggestions {
+    background-color: #000;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    border: 1px solid #00ff00;
+    margin-top: 10px;
+    padding: 10px;
+    width: 300px;
+}
+
+#command-suggestions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#command-suggestions li {
+    padding: 5px 0;
+}
+
+.project-image {
+    display: none;
+    opacity: 0;
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-    width: 500px; /* Set the desired width */
+    transform: translateY(20px);
+    width: 250px; /* Set the desired width */
     height: auto; /* Maintain aspect ratio */
 }

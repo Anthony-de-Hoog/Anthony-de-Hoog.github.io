@@ -13,16 +13,40 @@
     <span>C:\Google\Github\https://anthony-de-hoog.github.io/Contact.></span><br>
     <span></span><br>
 </div>
-<h1 class="typing"><span>Hello world, Contact</span></h1>
+<h1 class="typing"><span>Contact</span></h1>
+
+
+<h2 class="typing"><span>Contact Me at: </span></h2>
+
+<ul>
+    <li class="typing"><span>Gmail: anthony03anko@gmail.com</span></li>
+    <li class="typing"><a href="https://www.linkedin.com/in/anthony-de-hoog-1619b3318/"><span>LinkedIn</span></a></li>
+</ul>
+
+
 <nav>
     <ul>
         <li class="typing"><a href="Home.html"><span>Home </span></a></li>
         <li class="typing"><a href="AboutMe.html"><span>About Me </span></a></li>
-        <li class="typing"><a href="Projecten.html"><span>Projecten </span></a></li>
+        <li class="typing"><a href="Projecten.html"><span>Projects </span></a></li>
         <li class="typing"><a href="Contact.html"><span>Contact </span></a></li>
     </ul>
 </nav>
 
+<!-- Add this at the bottom of the body tag in both index.html and Projecten.html -->
+<div id="terminal-input">
+    <span id="command-prompt" style="visibility: hidden;">C:\></span>
+    <input type="text" id="command-input" placeholder="Type command here..." style="visibility: hidden;">
+</div>
+<!-- Add this below the terminal input in both index.html and Home.html -->
+<div id="command-suggestions" style="display: none;">
+    <ul>
+        <li>home</li>
+        <li>about me</li>
+        <li>projects</li>
+        <li>contact</li>
+    </ul>
+</div>
 <script src="matrix.js"></script>
 </body>
 </html>
