@@ -29,7 +29,12 @@
 
 <div class="project typing">
   <h2 class="typing"><span>Here is the demo for my Jump physics: </span></h2>
-  <img src="Website photos/Jump-Demo.gif" height="555" width="auto"/>
+  <img src="Website photos/Jump-Demo.gif"
+       height="555"
+       width="auto"
+       class="portrait zoomable"
+       loading="lazy"
+       decoding="async"/>
   <p class="typing"><span>Here is a gif where you see me pressing the space button to make this character jump realistically.</span></p>
 </div>
 
@@ -42,13 +47,23 @@
 
 <div class="project typing">
   <h2 class="typing"><span>My Visual Sheet for the Health System: </span></h2>
-  <img src="Website photos/Jump-Sheet.png" height="649" width="auto" />
+  <img src="Website photos/Jump-Sheet.png"
+       height="649"
+       width="auto"
+       class="portrait zoomable"
+       loading="lazy"
+       decoding="async"/>
   <p><span>This is the visual sheet I made for the Jump mechanic. Left is the concept art of how I want the jump to work with some mathematical formulas that should do the trick. Right you see the code I have written to make it actually work.</span></p>
 </div>
 
 <div class="project typing">
   <h2 class="typing"><span>Here is the demo for my Planets physics: </span></h2>
-  <img src="Website photos/Space-Demo.gif" height="555" width="auto"/>
+  <img src="Website photos/Space-Demo.gif"
+       height="555"
+       width="auto"
+       class="portrait zoomable"
+       loading="lazy"
+       decoding="async"/>
   <p class="typing"><span>Here is a gif simulating the moon orbiting around the earth. The Moon spins around the earth not following a path but rather "swinging" back and forth because the object is attracted to the mass of the earth.</span></p>
 </div>
 
@@ -86,6 +101,16 @@
     <li>contact</li>
   </ul>
 </div>
+<!-- Optional: overlay element if your lightbox.js does not create it dynamically -->
+<div class="lightbox" aria-hidden="true">
+  <img alt="">
+</div>
+
 <script src="matrix.js"></script>
+<script src="lightbox.js"></script>
+<script>
+  // Enable zoom for images with class .zoomable (e.g., your portrait)
+  enableLightbox('.zoomable');
+</script>
 </body>
 </html>

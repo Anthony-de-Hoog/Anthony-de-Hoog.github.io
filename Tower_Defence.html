@@ -19,7 +19,12 @@
 
 <div class="project typing">
   <h2 class="typing"><span>Here is the demo: </span></h2>
-  <img src="Website photos/TextureDemo.gif" height="548" width="auto"/>
+  <img src="Website photos/TextureDemo.gif"
+       height="548"
+       width="auto"
+       class="portrait zoomable"
+       loading="lazy"
+       decoding="async"/>
   <p class="typing"><span>Here is a gif where you see me placing the towers that are supposed to be bowmen shooting at orcs. When you do defeat orcs you get 50 points. And if you didn't notice it already this Tower Defence game is heavily inspired by Lord of the Rings and especially the battle of Helm's Deep.</span></p>
 </div>
 
@@ -39,7 +44,12 @@
 
 <div class="project typing">
   <h2 class="typing"><span>My Visual Sheet for the Health System: </span></h2>
-  <img src="Website photos/Visualsheet-Tower-Defence.png" height="720" width="auto" />
+  <img src="Website photos/Visualsheet-Tower-Defence.png"
+       height="720"
+       width="auto"
+       class="portrait zoomable"
+       loading="lazy"
+       decoding="async"/>
   <p><span>This is the visual sheet I made for the Tower Radius on what it should do and the code on how it works. Left is the concept art on how I imagine how the Towers should work before I start coding. Right you see the code that makes it work and on the bottom you see a picture of how it looks like now.</span></p>
 </div>
 
@@ -70,6 +80,16 @@
     <li>contact</li>
   </ul>
 </div>
+<!-- Optional: overlay element if your lightbox.js does not create it dynamically -->
+<div class="lightbox" aria-hidden="true">
+  <img alt="">
+</div>
+
 <script src="matrix.js"></script>
+<script src="lightbox.js"></script>
+<script>
+  // Enable zoom for images with class .zoomable (e.g., your portrait)
+  enableLightbox('.zoomable');
+</script>
 </body>
 </html>

@@ -19,7 +19,11 @@
 
 <div class="project typing">
     <h2><span>Operation Starfal </span></h2>
-    <img src="Website photos/HPPickupModel.png" alt="A Health Pickup Model">
+    <img src="Website photos/HPPickupModel.png"
+         alt="A Health Pickup Model"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async">
     <p><span>This is a 3D Model I made for the game I am working on this year named Operation Starfall. This is a health pickup I modelled myself and have written the code for.</span></p>
     <ul>
         <li class="typing"><a href="Operation Starfall.html"><span>Click here if you want to learn more! </span></a></li>
@@ -28,7 +32,11 @@
 
 <div class="project typing">
     <h2><span>Tower Defence</span></h2>
-    <img src="Website photos/Tower Defence.png" alt="Screenshot of my Tower Defence game">
+    <img src="Website photos/Tower Defence.png"
+         alt="Screenshot of my Tower Defence game"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async">
     <p><span>This project was a college assignment where we had about 8 weeks to independently make a Tower Defense game.</span></p>
     <ul>
         <li class="typing"><a href="Tower_Defence.html"><span>Click here if you want to learn more! </span></a></li>
@@ -37,7 +45,11 @@
 
 <div class="project typing">
     <h2><span>Mathematics</span></h2>
-    <img src="Website photos/Space.png" alt="Screenshot of the earth and moon">
+    <img src="Website photos/Space.png"
+         alt="Screenshot of the earth and moon"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async">
     <p><span>This is something I made to see if I can use math to create mathematically correct scenarios using physics to make the scenarios as realistic as possible.</span></p>
     <ul>
         <li class="typing"><a href="Mathematics.html"><span>Click here if you want to learn more! </span></a></li>
@@ -46,7 +58,11 @@
 
 <div class="project typing">
     <h2><span>Vertical Slice: Darkest Dungeon</span></h2>
-    <img src="Website photos/DarkestDungeon.png" alt="Screenshot of Vertical Slice That looks like Darkest Dungeon">
+    <img src="Website photos/DarkestDungeon.png"
+         alt="Screenshot of Vertical Slice That looks like Darkest Dungeon"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async">
     <p><span>For the Vertical Slice project we had to choose which game we have to remake a chosen 15 seconds clip. some other people and me and chose for Darkest Dungeon.</span></p>
     <ul>
         <li class="typing"><a href="Vertical%20Slice.html"><span>Click here if you want to learn more! </span></a></li>
@@ -80,6 +96,16 @@
         <li>contact</li>
     </ul>
 </div>
+<!-- Optional: overlay element if your lightbox.js does not create it dynamically -->
+<div class="lightbox" aria-hidden="true">
+    <img alt="">
+</div>
+
 <script src="matrix.js"></script>
+<script src="lightbox.js"></script>
+<script>
+    // Enable zoom for images with class .zoomable (e.g., your portrait)
+    enableLightbox('.zoomable');
+</script>
 </body>
 </html>

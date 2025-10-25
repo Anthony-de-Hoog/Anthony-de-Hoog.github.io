@@ -68,6 +68,49 @@ ul {
     transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
+/* Portrait images: smaller default size, overrides generic project image sizing */
+.project img.portrait,
+img.portrait {
+    width: 100%;
+    max-width: 420px; /* adjust as needed */
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Prevent overflow on small screens */
+@media (max-width: 520px) {
+    .project img.portrait,
+    img.portrait {
+        max-width: 85vw;
+    }
+}
+
+/* Lightbox overlay */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+}
+.lightbox.open {
+    display: flex;
+}
+.lightbox img {
+    max-width: min(95vw, 1400px);
+    max-height: 90vh;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    background: #111;
+}
+
+/* Lock background scroll while lightbox is open */
+body.lightbox-open {
+    overflow: hidden;
+}
+
 /* FIX: only hide before the .loaded class is applied */
 html.js .project img:not(.loaded) {
     opacity: 0;

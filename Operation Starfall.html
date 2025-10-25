@@ -27,7 +27,12 @@
 
 <div class="project typing">
     <h2 class="typing"><span>Here is the demo of how the health pickup works: </span></h2>
-    <img src="Website photos/Health-Demo.gif" height="555" width="auto"/>
+    <img src="Website photos/Health-Demo.gif"
+         height="555"
+         width="auto"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async"/>
     <p class="typing"><span>Here is a gif where you see me walking in the health pickup to regain some of my health. The red circle above the character's head is the player's health. And at the beginning of the gif it is missing a quarter. Then when the player walks into the health pickup the health circle regains 1/5 of the circle back.</span></p>
 </div>
 
@@ -40,19 +45,34 @@
 
 <div class="project typing">
     <h2 class="typing"><span>My Visual Sheet for the Health System: </span></h2>
-    <img src="Website photos/OS-Sheet.png" height="715" width="auto" />
+    <img src="Website photos/OS-Sheet.png"
+         height="715"
+         width="auto"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async"/>
     <p><span>This is the visual sheet I made for how the Health Pickup should work and the scripts to make it work. The left drawing is the concept drawing I always make to make the idea more visual before I start coding. The code on the right are the line codes that make the whole pickup work and the model is of course how the object looks like now.</span></p>
 </div>
 
 <div class="project typing">
     <h2 class="typing"><span>Here is the demo of how my model looks like: </span></h2>
-    <img src="Website photos/Health-Model-Demo.gif" height="555" width="auto"/>
+    <img src="Website photos/Health-Model-Demo.gif"
+         height="555"
+         width="auto"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async"/>
     <p class="typing"><span>Here is a gif showing the model I made with a shader making the red look like liquid.</span></p>
 </div>
 
 <div class="project typing">
     <h2 class="typing"><span>My Visual Sheet for the Health System: </span></h2>
-    <img src="Website photos/Health-Model-Sheet.png" height="711" width="auto" />
+    <img src="Website photos/Health-Model-Sheet.png"
+         height="711"
+         width="auto"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async"/>
     <p><span>This is the visual sheet I made for the model for the Health Pickup. Left you see the grey-box, an AI concept art and the concept art I drew to make it more our own design. On the right you see the model in Blender, the textures in Substance painter and the eventual model in Unity.</span></p>
 </div>
 
@@ -60,15 +80,30 @@
 
 <div class="project typing">
     <h2 class="typing"><span>Here are the photo's showing the design process with the eventual result: </span></h2>
-    <img src="Website photos/greybox.png" height="605" width="auto"/>
+    <img src="Website photos/greybox.png"
+         height="605"
+         width="auto"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async"/>
     <p class="typing"><span>Here is the greybox I made for the health pickup. These were all my ideas of how the Health Pickup should look like, with some references to other games like CastleVania or Half-Life. Eventually after discussing it with the lead artist we chose for a cylinder form.</span></p>
 </div>
 <div class="project typing">
-    <img src="Website photos/prototype.png" height="385" width="auto"/>
+    <img src="Website photos/prototype.png"
+         height="385"
+         width="auto"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async"/>
     <p class="typing"><span>Here is the prototype I made for the health pickup. I wanted it to look a bit futuristic with maybe wires. The OSF stands for Operation StarFall.</span></p>
 </div>
 <div class="project typing">
-    <img src="Website photos/HPPickupModel.png" height="574" width="auto"/>
+    <img src="Website photos/HPPickupModel.png"
+         height="574"
+         width="auto"
+         class="portrait zoomable"
+         loading="lazy"
+         decoding="async"/>
     <p class="typing"><span>Here is the final model I made for the health pickup. The model itself is made in Blender, the textures are made in Adobe Substance Painter 3D and with shaders I made it look a bit more cartoon and made the red in the middle behave like liquid.</span></p>
 </div>
 
@@ -99,6 +134,16 @@
         <li>contact</li>
     </ul>
 </div>
+<!-- Optional: overlay element if your lightbox.js does not create it dynamically -->
+<div class="lightbox" aria-hidden="true">
+    <img alt="">
+</div>
+
 <script src="matrix.js"></script>
+<script src="lightbox.js"></script>
+<script>
+    // Enable zoom for images with class .zoomable (e.g., your portrait)
+    enableLightbox('.zoomable');
+</script>
 </body>
 </html>

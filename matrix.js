@@ -3,27 +3,94 @@ document.addEventListener("DOMContentLoaded", function () {
     // Mark that JS is active (used for CSS fallback)
     document.documentElement.classList.add("js");
 
+    // Snapshot keys per page
+    const SNAP_KEY = 'snap:' + location.pathname;
+
+    function isBackForwardNav() {
+        try {
+            const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+            if (nav && nav.type === 'back_forward') return true;
+        } catch (e) {}
+        // Deprecated fallback
+        if (performance && performance.navigation && performance.navigation.type === 2) return true;
+        return false;
+    }
+
+    function tryRestoreSnapshot() {
+        try {
+            const raw = sessionStorage.getItem(SNAP_KEY);
+            if (!raw) return false;
+            const texts = JSON.parse(raw);
+            const spans = document.querySelectorAll('.typing span');
+            if (!spans.length || !texts.length) return false;
+
+            const len = Math.min(spans.length, texts.length);
+            for (let i = 0; i < len; i++) {
+                spans[i].textContent = texts[i];
+                // Restore list bullets for links
+                const a = spans[i].parentElement;
+                if (a && a.tagName === 'A' && a.parentElement) {
+                    a.parentElement.style.listStyle = 'disc';
+                }
+            }
+
+            // Reveal images and remove any uploading helper
+            document.querySelectorAll('.project img').forEach((img) => {
+                const prev = img.previousElementSibling;
+                if (prev && typeof prev.textContent === 'string' && prev.textContent.startsWith('Uploading image')) {
+                    prev.remove();
+                }
+                img.classList.add('loaded');
+            });
+
+            // Reveal prompt/input if present
+            const prompt = document.getElementById('command-prompt');
+            const input = document.getElementById('command-input');
+            if (prompt) prompt.style.visibility = 'visible';
+            if (input) input.style.visibility = 'visible';
+
+            // Keep a cursor blinking at the end to preserve the terminal feel
+            if (spans[len - 1]) {
+                spans[len - 1].innerHTML = spans[len - 1].textContent + '<span class="typing-cursor"></span>';
+            }
+
+            return true;
+        } catch (e) {
+            console.warn('Snapshot restore failed:', e);
+            return false;
+        }
+    }
+
+    function saveSnapshot() {
+        try {
+            const texts = Array.from(document.querySelectorAll('.typing span')).map((sp) => sp.textContent);
+            sessionStorage.setItem(SNAP_KEY, JSON.stringify(texts));
+        } catch (e) {
+            console.warn('Snapshot save failed:', e);
+        }
+    }
+
     // Collect all typing spans
     const elements = document.querySelectorAll(".typing span");
     let currentElementIndex = 0;
 
-    // Config: line durations (ms) rather than "ms per char"
+    // Config: line durations (ms)
     const lineDurations = { normal: 200, fast: 100, turbo: 0 };
-    const saved = localStorage.getItem("typistSpeed");
-    let currentSpeedName = saved || "normal";
+    const savedSpeed = localStorage.getItem("typistSpeed");
+    let currentSpeedName = savedSpeed || "normal";
 
     // Controls
     let fastForwardHeld = false;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) currentSpeedName = "turbo";
 
-    // Dedicated typing timer (do NOT reuse this for image loading)
+    // Dedicated typing timer (do NOT reuse it for anything else)
     let typingTimer = null;
 
     // Controls: hold Shift for fast-forward; press 's' to skip the entire page; click toggles fast-forward
     document.addEventListener("keydown", (e) => {
         if (e.key === "Shift") fastForwardHeld = true;
-        if (e.key.toLowerCase() === "s") skipEntirePage();
+        if (e.key && e.key.toLowerCase() === "s") skipEntirePage();
     });
     document.addEventListener("keyup", (e) => {
         if (e.key === "Shift") fastForwardHeld = false;
@@ -57,7 +124,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (callback) {
-                // Preserve your pause logic
                 const isStartupMessage = element.closest("#startup-message");
                 const isLastElement = currentElementIndex === elements.length - 1;
                 const isLastStartupMessage =
@@ -74,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Continue typing flow
                     callback();
 
-                    // Fallback: if image wasn't started yet, start it now once
+                    // Fallback: if image wasn't started yet, start it once
                     const projectDiv = element.closest(".project");
                     if (projectDiv && !projectDiv.dataset.imageStarted) {
                         projectDiv.dataset.imageStarted = "true";
@@ -144,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             elements[currentElementIndex].innerHTML += '<span class="typing-cursor"></span>';
             if (document.querySelector("#boot-screen")) {
-                // Do NOT use scheduleTyping here; keep it independent
+                // Independent redirect timer
                 setTimeout(() => {
                     window.location.href = "Home.html";
                 }, 100);
@@ -154,6 +220,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const input = document.getElementById("command-input");
             if (prompt) prompt.style.visibility = "visible";
             if (input) input.style.visibility = "visible";
+
+            // Save snapshot after everything finishes
+            saveSnapshot();
         }
     }
 
@@ -163,10 +232,11 @@ document.addEventListener("DOMContentLoaded", function () {
             clearTimeout(typingTimer);
             typingTimer = null;
         }
-        if (!elements.length) return;
+        const spans = document.querySelectorAll(".typing span");
+        if (!spans.length) return;
 
-        for (let i = currentElementIndex; i < elements.length; i++) {
-            const el = elements[i];
+        for (let i = currentElementIndex; i < spans.length; i++) {
+            const el = spans[i];
             const text = el.getAttribute("data-text") || el.textContent || "";
             el.innerHTML = text;
 
@@ -189,13 +259,16 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        currentElementIndex = elements.length - 1;
-        elements[currentElementIndex].innerHTML += '<span class="typing-cursor"></span>';
+        currentElementIndex = spans.length - 1;
+        spans[currentElementIndex].innerHTML += '<span class="typing-cursor"></span>';
 
         const prompt = document.getElementById("command-prompt");
         const input = document.getElementById("command-input");
         if (prompt) prompt.style.visibility = "visible";
         if (input) input.style.visibility = "visible";
+
+        // Save snapshot of the fully revealed page
+        saveSnapshot();
     }
 
     function uploadImage(imgElement, { instant = false } = {}) {
@@ -204,8 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Do NOT toggle display; rely on CSS opacity/transform to avoid flicker/layout shift
-        // Ensure the loading text appears below the image placeholder
+        // Add uploading helper below the image placeholder
         const loadingText = document.createElement("div");
         loadingText.textContent = "Uploading image █░░░░░░░░░ 10%";
         loadingText.style.color = "#00ff00";
@@ -230,7 +302,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 )} ${progress}%`;
                 if (progress >= 100) {
                     clearInterval(interval);
-                    // IMPORTANT: use setTimeout, not scheduleTyping
                     setTimeout(() => {
                         loadingText.remove();
                         imgElement.classList.add("loaded");
@@ -245,15 +316,19 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
 
-    // Prepare each typing span
-    elements.forEach((element) => {
-        element.setAttribute("data-text", element.textContent);
-        element.innerHTML = "";
-    });
+    // Unconditionally attempt restore BEFORE preparing spans
+    const restored = tryRestoreSnapshot();
 
-    // Kick off typing
-    if (elements.length > 0) {
-        startTyping(elements[currentElementIndex], typeRemainingElements);
+    // Prepare each typing span only if we didn't restore, then kick off typing
+    if (!restored) {
+        elements.forEach((element) => {
+            element.setAttribute("data-text", element.textContent);
+            element.innerHTML = "";
+        });
+
+        if (elements.length > 0) {
+            startTyping(elements[currentElementIndex], typeRemainingElements);
+        }
     }
 
     // If you use #main-content somewhere, keep this
@@ -283,6 +358,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         break;
                     case "contact":
                         window.location.href = "Contact.html";
+                        break;
+                    // Optional: make backtracking feel integrated
+                    case "back":
+                    case "b":
+                    case "cd ..":
+                        history.back();
                         break;
                     default:
                         alert("Unknown command: " + command);

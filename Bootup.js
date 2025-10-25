@@ -1,3 +1,5 @@
+// javascript
+// 'Bootup.js'
 document.addEventListener("DOMContentLoaded", function () {
     // Collect the boot lines
     const elements = document.querySelectorAll("#boot-screen .typing");
@@ -65,6 +67,56 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // --- One-time "Press s to skip" centered hint with fade/scale ---
+    const HINT_KEY = 'skip-hint:' + location.pathname;
+
+    function showSkipHintOnce() {
+        try {
+            if (sessionStorage.getItem(HINT_KEY)) return;
+            sessionStorage.setItem(HINT_KEY, '1');
+        } catch (e) { /* ignore */ }
+
+        const hint = document.createElement('div');
+        hint.id = 'skip-hint';
+        hint.textContent = 'Press s to skip';
+        // Centered styling
+        hint.style.position = 'fixed';
+        hint.style.left = '50%';
+        hint.style.top = '50%';
+        hint.style.transform = 'translate(-50%, -50%)';
+        hint.style.padding = '10px 14px';
+        hint.style.background = 'rgba(0,0,0,0.85)';
+        hint.style.border = '1px solid #00ff00';
+        hint.style.borderRadius = '8px';
+        hint.style.color = '#00ff00';
+        hint.style.fontFamily = 'Courier New, monospace';
+        hint.style.fontSize = '16px';
+        hint.style.textAlign = 'center';
+        hint.style.zIndex = '9999';
+        hint.style.opacity = '0';
+        hint.style.transition = 'opacity 200ms ease, transform 200ms ease';
+        hint.style.pointerEvents = 'none'; // don’t block clicks on the page
+        document.body.appendChild(hint);
+        // Fade/scale in
+        requestAnimationFrame(() => {
+            hint.style.opacity = '1';
+            hint.style.transform = 'translate(-50%, -50%) scale(1.0)';
+        });
+
+        const remove = () => {
+            hint.style.opacity = '0';
+            hint.style.transform = 'translate(-50%, -50%) scale(0.98)';
+            setTimeout(() => hint.remove(), 200);
+            document.removeEventListener('keydown', onKey);
+        };
+        const onKey = (e) => {
+            if (e.key && e.key.toLowerCase() === 's') remove();
+        };
+        document.addEventListener('keydown', onKey);
+        setTimeout(remove, 4000);
+    }
+    // --- End hint ---
+
     // Initialize lines
     elements.forEach((element) => {
         element.setAttribute("data-text", element.textContent);
@@ -72,6 +124,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (elements.length > 0) {
+        // Show the hint once per session, then start typing
+        showSkipHintOnce();
         startTyping(elements[currentElementIndex], charDelayMs, typeRemainingElements);
     }
 });

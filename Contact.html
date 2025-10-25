@@ -47,6 +47,16 @@
         <li>contact</li>
     </ul>
 </div>
+<!-- Optional: overlay element if your lightbox.js does not create it dynamically -->
+<div class="lightbox" aria-hidden="true">
+    <img alt="">
+</div>
+
 <script src="matrix.js"></script>
+<script src="lightbox.js"></script>
+<script>
+    // Enable zoom for images with class .zoomable (e.g., your portrait)
+    enableLightbox('.zoomable');
+</script>
 </body>
 </html>
