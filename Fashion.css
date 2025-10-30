@@ -174,3 +174,39 @@ html.js .project img:not(.loaded) {
     width: 250px; /* Set the desired width */
     height: auto; /* Maintain aspect ratio */
 }
+
+
+.code-snippet {
+    background: #0a0a0a;
+    border: 1px solid #00ff00;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    inline-size: 500px;
+}
+
+.code-snippet code {
+    color: #00ff00;
+    display: block;
+    white-space: pre;
+}
+
+.code-snippet .code-comment {
+    color: #00aa00;
+}
+
+.code-snippet .code-keyword {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.code-snippet-header {
+    color: #00ff00;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}

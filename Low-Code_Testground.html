@@ -47,6 +47,29 @@
     <p><span>This is the visual sheet I made for Data Saving. On the left you see my drawing of my vision I had for this system, Where you can save your scene and GameObjects into my server. Under the drawing you see the MicroFlow I made that collects the JSON data it receives and save them in the webpage I made where you can see the data. On the right you see the Import mapping I made with a JSON Structure I wrote. You can see the Entities, their associations and their Variables I want to for my data. Then under the Import Mapping you see a bit of the Unity script that collects the data from the scene, convert them into JSON data and sends them to my server.</span></p>
 </div>
 
+<div class="project typing">
+    <h2 class="typing"><span>Health effect addition code:</span></h2>
+
+    <div class="code-snippet-header">HealthEffect.cs</div>
+    <div class="code-snippet">
+        <code>public class HealthEffect : BaseEffect
+            {
+            private float _healAmount = 20f;
+
+            public override void Apply()
+            {
+            gameObject.AddHealth(_healAmount);
+
+            base.Apply();
+            }
+
+
+            }</code>
+    </div>
+
+    <p class="typing"><span>This script adds 20 HP to the player if they have less than 100 HP, and it won't go over the 100 HP.</span></p>
+</div>
+
 <nav>
     <ul>
         <li class="typing"><a href="Home.html"><span>Home </span></a></li>

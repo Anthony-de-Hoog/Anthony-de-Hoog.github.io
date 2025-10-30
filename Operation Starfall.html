@@ -36,6 +36,29 @@
     <p class="typing"><span>Here is a GIF showing me walking into the health pickup to regain health. The red circle above the character’s head is the player’s health. At the beginning of the GIF, a quarter is missing. When the player walks into the health pickup, the health circle regains one‑fifth.</span></p>
 </div>
 
+<div class="project typing">
+    <h2 class="typing"><span>Health effect addition code:</span></h2>
+
+    <div class="code-snippet-header">HealthEffect.cs</div>
+    <div class="code-snippet">
+        <code>public class HealthEffect : BaseEffect
+            {
+              private float _healAmount = 20f;
+
+              public override void Apply()
+                {
+                  gameObject.AddHealth(_healAmount);
+
+                  base.Apply();
+                }
+
+
+            }</code>
+    </div>
+
+    <p class="typing"><span>This script adds 20 HP to the player if they have less than 100 HP, and it won't go over the 100 HP.</span></p>
+</div>
+
 <h2 class="typing"><span>The script making it work: </span></h2>
 
 <ul>
