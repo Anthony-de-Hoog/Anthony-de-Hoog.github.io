@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.key && e.key.toLowerCase() === 's') remove();
         };
         document.addEventListener('keydown', onKey);
-        setTimeout(remove, 4000);
+        //setTimeout(remove, 4000);
     }
     // --- End hint ---
 
