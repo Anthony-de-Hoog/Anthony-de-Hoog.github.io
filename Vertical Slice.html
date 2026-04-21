@@ -39,12 +39,339 @@
 <h2 class="typing"><span>Scripts I worked on: </span></h2>
 
 <ul>
-  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Damage-System"><span>Damage System</span></a></li>
-  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/HP-System"><span>Health System</span></a></li>
-  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Mouse-Click"><span>Mouse Click</span></a></li>
-  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Turn%20system"><span>Turn System</span></a></li>
-  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Scene-Editor"><span>Post Game</span></a></li>
-  <p class="typing"><span>These are links to all the scripts I worked on in the project. I eventually worked on five out of seven scripts, which wasn't planned, but it was a good distraction and made me realise I enjoy coding.</span></p>
+  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Damage-System"><span>Damage System:</span></a></li>
+
+  <div class="project">
+    <div class="code-snippet" role="region" aria-label="FearStage code snippet">
+      <div class="code-snippet-header">DamageSystem.cs</div>
+      <pre><code>public class DamageSystem : MonoBehaviour
+{
+    private int damage;
+
+    public void DamageTarget(GameObject target)
+    {
+        if (target == null) return;
+
+        HPSystem hpSystem = target.GetComponent&lt;HPSystem&gt;();
+        if (hpSystem != null)
+        {
+            damage = Random.Range(7, 10);  // Apply random damage
+            hpSystem.hp -= damage;  // Deduct health
+            Debug.Log($"{target.name} took {damage} damage. Remaining HP: {hpSystem.hp}");
+        }
+    }
+}
+</code></pre>
+    </div>
+  </div>
+
+  <div class="project">
+    <div class="code-snippet" role="region" aria-label="FearStage code snippet">
+      <div class="code-snippet-header">TriggerDamageScript.cs</div>
+      <pre><code>public class TriggerDamageScript : MonoBehaviour
+{
+    [SerializeField] private List&lt;MouseClick&gt; playerClickScripts = new List&lt;MouseClick&gt;();
+    [SerializeField] private List&lt;MouseClick&gt; enemyClickScripts = new List&lt;MouseClick&gt;();
+    private BattleSystem battleSystem;
+    private bool damageModeActive = false; // Track if damage mode is active
+
+
+    private void Start()
+    {
+        battleSystem = FindAnyObjectByType&lt;BattleSystem&gt;();
+
+        // Disable all MouseClick scripts at the start
+        DisableAllMouseClicks();
+    }
+
+    public void AddAlly(MouseClick click)
+    {
+        if (click == null) return;
+
+        playerClickScripts.Add(click);
+        click.OnMouseClickUsed += ResetMouseClick;
+        click.enabled = false; // Ensure it starts disabled
+    }
+
+    public void AddEnemy(MouseClick click)
+    {
+        if (click == null) return;
+
+        enemyClickScripts.Add(click);
+        click.OnMouseClickUsed += ResetMouseClick;
+        click.enabled = false; // Ensure it starts disabled
+    }
+
+    public void EnableDamageMode()
+    {
+        // Only allow enabling damage mode during a player's turn
+        if (battleSystem == null || !battleSystem.state.ToString().StartsWith("ALLY")) return;
+
+        damageModeActive = true;
+
+        // Enable only enemy MouseClick scripts
+        foreach (var mouseClickScript in enemyClickScripts)
+        {
+            if (mouseClickScript != null)
+            {
+                mouseClickScript.enabled = true;
+                Debug.Log($"{mouseClickScript.gameObject.name} is now clickable.");
+            }
+        }
+    }
+
+    public void ResetMouseClick()
+    {
+        // Disable all MouseClick scripts and deactivate damage mode
+        DisableAllMouseClicks();
+        damageModeActive = false;
+
+        // Notify the BattleSystem to switch to the next turn
+        if (battleSystem != null)
+        {
+            battleSystem.BattleStateSwitch();
+        }
+    }
+
+    private void DisableAllMouseClicks()
+    {
+        foreach (var mouseClickScript in playerClickScripts)
+        {
+            if (mouseClickScript != null)
+            {
+                mouseClickScript.enabled = false;
+                mouseClickScript.gameObject.GetComponent&lt;Renderer&gt;().sharedMaterial.color = Color.white; // Reset color
+            }
+        }
+
+        foreach (var mouseClickScript in enemyClickScripts)
+        {
+            if (mouseClickScript != null)
+            {
+                mouseClickScript.enabled = false;
+                mouseClickScript.gameObject.GetComponent&lt;Renderer&gt;().sharedMaterial.color = Color.white; // Reset color
+            }
+        }
+    }
+
+    public void SwitchTurn()
+    {
+        // Directly switch the turn without enabling MouseClick scripts
+        if (battleSystem != null)
+        {
+            battleSystem.BattleStateSwitch();
+        }
+
+        // Ensure all MouseClick scripts are disabled after turn switching
+        DisableAllMouseClicks();
+        damageModeActive = false;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var mouseClickScript in playerClickScripts)
+        {
+            if (mouseClickScript != null)
+            {
+                mouseClickScript.OnMouseClickUsed -= ResetMouseClick;
+            }
+        }
+
+        foreach (var mouseClickScript in enemyClickScripts)
+        {
+            if (mouseClickScript != null)
+            {
+                mouseClickScript.OnMouseClickUsed -= ResetMouseClick;
+            }
+        }
+    }
+}
+</code></pre>
+    </div>
+  </div>
+
+  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/HP-System"><span>Health System:</span></a></li>
+
+  <div class="project">
+    <div class="code-snippet" role="region" aria-label="FearStage code snippet">
+      <div class="code-snippet-header">HPSystem.cs</div>
+      <pre><code>public class HPSystem : MonoBehaviour
+{
+    private float _hp;  // Backing field
+
+    public float hp
+    {
+        get => _hp;
+        set
+        {
+            _hp = Mathf.Max(0, value);  // Prevent HP from going below 0
+        }
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
+}
+</code></pre>
+    </div>
+  </div>
+
+  <div class="project">
+    <div class="code-snippet" role="region" aria-label="FearStage code snippet">
+      <div class="code-snippet-header">CrusaderHealth.cs</div>
+      <pre><code>public class CrusaderHealth : HPSystem
+{
+    private int previousHp;
+
+    public SpriteRenderer IdleSpriteRenderer;
+    public SpriteRenderer DefendSpriteRenderer;
+
+
+    void Start()
+    {
+        hp = 33;
+        previousHp = Mathf.FloorToInt(hp);
+
+        if (DefendSpriteRenderer != null)
+        {
+            DefendSpriteRenderer.enabled = false;
+        }
+    }
+
+
+
+    void Update()
+    {
+        if (hp <= 0)
+        {
+            Die();
+        }
+
+        if (hp < previousHp)
+        {
+            StartCoroutine(SwitchSpritesTemporarily());
+            previousHp = Mathf.FloorToInt(hp);
+        }
+    }
+
+    private IEnumerator SwitchSpritesTemporarily()
+    {
+        // Enable the child SpriteRenderer and disable the parent
+        if (DefendSpriteRenderer != null && IdleSpriteRenderer != null)
+        {
+            DefendSpriteRenderer.enabled = true;
+            IdleSpriteRenderer.enabled = false;
+
+            // Wait for 1 second
+            yield return new WaitForSeconds(1f);
+
+            // Revert to the parent sprite
+            DefendSpriteRenderer.enabled = false;
+            IdleSpriteRenderer.enabled = true;
+        }
+
+    }
+}
+</code></pre>
+    </div>
+  </div>
+
+
+  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Mouse-Click"><span>Mouse Click:</span></a></li>
+
+  <div class="project">
+    <div class="code-snippet" role="region" aria-label="FearStage code snippet">
+      <div class="code-snippet-header">MouseClick.cs</div>
+      <pre><code>public class MouseClick : MonoBehaviour
+{
+    [SerializeField] private DamageSystem damageSystem;
+    private enum State { Deactive, Active } // Makes it possible to give an active state or a deactive state
+    private State myState = State.Deactive;
+
+    public System.Action OnMouseClickUsed; // Event to notify when the script is used
+    /* private BattleSystem battleSystem; */
+
+    private void Start()
+    {
+        /* battleSystem = FindAnyObjectByType&lt;BattleSystem&gt;(); */
+
+        if (damageSystem == null)
+        {
+            damageSystem = GetComponent&lt;DamageSystem&gt;(); // Optional fallback
+        }
+    }
+
+    private void Update()
+    {
+       /* SpriteAttackAllies(BattleState.ALLY1, 0, battlleSystem.InstantiatedAllies); */
+
+        if (myState == State.Deactive)
+        {
+            GetComponent&lt;Renderer&gt;().material.color = Color.white; // Deactive state keeps the object color white
+        }
+        else if (myState == State.Active)
+        {
+            GetComponent&lt;Renderer&gt;().material.color = Color.red; // Active state makes the object red
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (damageSystem != null)
+                {
+                    damageSystem.DamageTarget(gameObject); // Pass the current gameObject as the target
+                    this.enabled = false; // Deactivate the script after use
+                    OnMouseClickUsed?.Invoke(); // Notify that the script was used
+                }
+            }
+        }
+    }
+
+  /* private void SpriteAttackAllies(BattleState currentState, int index, List&lt;GameObject&gt; entities)
+    {
+        if (index >= 0 && index < entities.Count && entities[index] != null)
+        {
+            GameObject entity = entities[index];
+
+            // Get all SpriteRenderer components in the entity and its children
+            SpriteRenderer[] spriteRenderers = entity.GetComponentsInChildren&lt;SpriteRenderer&gt;();
+
+            if (spriteRenderers.Length > 1) // Ensure there are multiple SpriteRenderers
+            {
+                SpriteRenderer defaultSprite = spriteRenderers[1]; // Assume first is default
+                SpriteRenderer attackSprite = spriteRenderers[2];  // Assume second is attack
+
+                if (battleSystem.state == currentState)
+                {
+                    // Enable the attack sprite and disable the default sprite
+                    defaultSprite.enabled = false;
+                    attackSprite.enabled = true;
+                }
+                else
+                {
+                    // Revert to default sprite
+                    defaultSprite.enabled = true;
+                    attackSprite.enabled = false;
+                }
+            }
+        }
+    } */
+
+    private void OnMouseOver()
+    {
+        myState = State.Active; // Activates the object when the mouse hovers over the object
+    }
+
+    private void OnMouseExit()
+    {
+        myState = State.Deactive; // Deactivates the object when the mouse hovers away
+    }
+}
+</code></pre>
+    </div>
+  </div>
+  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Turn%20system"><span>Turn System:</span></a></li>
+  <li class="typing"><a href="https://github.com/MixmasterX28/VSDarkestDungeon/tree/Development3/DarkestDungeonVS/Assets/Scripts/Scene-Editor"><span>Post Game:</span></a></li>
+  <p class="typing"><span>These are links and Code Snippets to all the scripts I worked on in the project. I eventually worked on five out of seven scripts, which wasn't planned, but it was a good distraction and made me realise I enjoy coding.</span></p>
 </ul>
 
 <div class="project typing">
