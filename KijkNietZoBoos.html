@@ -17,96 +17,212 @@
 
 <h1 class="typing"><span>Kijk Niet Zo Boos</span></h1>
 
-<h2 class="typing"><span>GitHub link: </span></h2>
-
-<ul>
-    <li class="typing"><a href=""><span>Repository</span></a></li>
-    <p class="typing"><span>Here’s the link to the repository for the whole project.</span></p>
-</ul>
 
 
 <div class="project typing">
-    <h2 class="typing"><span>Here is a demo of how the health pickup works:</span></h2>
-    <img src="Website photos/Health-Demo.gif"
-         height="555"
-         width="auto"
-         class="portrait zoomable"
-         loading="lazy"
-         decoding="async"/>
-    <p class="typing"><span>Here is a GIF showing me walking into the health pickup to regain health. The red circle above the character’s head is the player’s health. At the beginning of the GIF, a quarter is missing. When the player walks into the health pickup, the health circle regains one‑fifth.</span></p>
+    <h2 class="typing"><span>Here is a demo of how the Fear System works:</span></h2>
+    <video class="portrait" controls playsinline preload="metadata" height="555">
+        <source src="Website photos/BangKijkKees.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <p class="typing"><span>Here is a MP4 of me turning around and looking at the creepy guy. When I look at the creep</span></p>
 </div>
 
 
 
-<h2 class="typing"><span>The script making it work: </span></h2>
+<h2 class="typing"><span>The scripts making it work: </span></h2>
 
-<ul>
-    <li class="typing"><a href="https://github.com/BAStudio/OperationStarfall/blob/pickup_system_large/Assets/Scripts/Framework/Pickups/Effects/HealthEffect.cs"><span>Health Effect</span></a></li>
-    <p class="typing"><span>This script heals the character when picked up. It integrates with the pickup system that links all pickups.</span></p>
-</ul>
+<div class="project">
+    <div class="code-snippet" role="region" aria-label="FearStage code snippet">
+        <div class="code-snippet-header">FearStage.cs</div>
+        <pre><code>/// &lt;summary&gt;
+/// Represents the discrete fear stages used by the fear system.
+/// The stages increase in intensity from &lt;see cref="None"/&gt; to &lt;see cref="Max"/&gt;.
+/// &lt;/summary&gt;
+/// &lt;remarks&gt;
+/// Stored as a &lt;c&gt;byte&lt;/c&gt; to keep the serialized size small and stable.
+/// The numeric values explicitly map increasing intensity to increasing numbers.
+/// &lt;/remarks&gt;
+public enum FearStage : byte
+{
+    /// &lt;summary&gt;No fear / default state.&lt;/summary&gt;
+    None = 1,
 
-<div class="project typing">
-    <h2 class="typing"><span>My Visual Sheet for the Health System: </span></h2>
-    <img src="Website photos/OS-Sheet.png"
-         height="715"
-         width="auto"
-         class="portrait zoomable"
-         loading="lazy"
-         decoding="async"/>
-    <p><span>This visual sheet shows how the health pickup should work and the scripts that make it function. On the left is the concept drawing I created to visualise the idea before coding. On the right are the code snippets that make the pickup work, and the model shows how it currently looks.</span></p>
+    /// &lt;summary&gt;Low level of fear.&lt;/summary&gt;
+    Low = 2,
+
+    /// &lt;summary&gt;Medium level of fear.&lt;/summary&gt;
+    Mid = 3,
+
+    /// &lt;summary&gt;Maximum level of fear.&lt;/summary&gt;
+    Max = 4
+}</code></pre>
+    </div>
 </div>
 
-<div class="project typing">
-    <h2 class="typing"><span>Here is a demo of what my model looks like:</span></h2>
-    <img src="Website photos/Health-Model-Demo.gif"
-         height="555"
-         width="auto"
-         class="portrait zoomable"
-         loading="lazy"
-         decoding="async"/>
-    <p class="typing"><span>Here is a GIF showing the model I made, with a shader that makes the red look like liquid.</span></p>
+<div class="project">
+	<div class="code-snippet" role="region" aria-label="FearStage code snippet">
+		<div class="code-snippet-header">IFearStageReceiver.cs</div>
+		<pre><code>/// &lt;summary&gt;
+/// Implemented by components that receive and apply a &lt;see cref="FearStage"/&gt; change.
+/// The fear system calls &lt;see cref="ApplyEffectsForStage(FearStage)"/&gt; when a new
+/// stage should be applied to the receiver (for example: vignette, audio, haptics).
+/// &lt;/summary&gt;
+public interface IFearStageReceiver
+{
+	/// &lt;summary&gt;
+	/// Apply the effects associated with the provided fear &lt;paramref name="stage"/&gt;.
+	/// &lt;/summary&gt;
+	/// &lt;param name="stage"&gt;The fear stage to apply.&lt;/param&gt;
+			void ApplyEffectsForStage(FearStage stage);
+}
+</code></pre>
+	</div>
 </div>
 
-<div class="project typing">
-    <h2 class="typing"><span>My Visual Sheet for the Health Pickup Model: </span></h2>
-    <img src="Website photos/Health-Model-Sheet.png"
-         height="711"
-         width="auto"
-         class="portrait zoomable"
-         loading="lazy"
-         decoding="async"/>
-    <p><span>This is the visual sheet I made for the health pickup model. On the left you can see the greybox, an AI concept, and the concept art I drew to refine the design. On the right are the model in Blender, the textures in Substance 3D Painter, and the final model in Unity.</span></p>
-</div>
+<div class="project">
+    <div class="code-snippet" role="region" aria-label="FearStage code snippet">
+        <div class="code-snippet-header">FearStageProvider.cs</div>
+        <pre><code>using System.Collections.Generic;
+using UnityEngine;
 
-<h2 class="typing"><span>The greybox and original design of the health pickup: </span></h2>
+/// &lt;summary&gt;
+/// Central hub for the fear system.
+/// Holds the current &lt;see cref="FearStage"/&gt; and broadcasts stage changes to all
+/// registered &lt;see cref="IFearStageReceiver"/&gt; components.
+/// &lt;/summary&gt;
+[DisallowMultipleComponent]
+public sealed class FearStageProvider : MonoBehaviour
+{
+	/// &lt;summary&gt;
+	///    Initial fear stage applied on startup and exposed as the current provider state.
+	///&lt;/summary&gt;
+	[Header("Initial stage")] [SerializeField]
+	private FearStage _stage = FearStage.None;
 
-<div class="project typing">
-    <h2 class="typing"><span>Here are the photos showing the design process and the final result: </span></h2>
-    <img src="Website photos/greybox.png"
-         height="605"
-         width="auto"
-         class="portrait zoomable"
-         loading="lazy"
-         decoding="async"/>
-    <p class="typing"><span>Here is the greybox I made for the health pickup. These were my ideas for how the health pickup should look, with references to other games like Castlevania and Half‑Life. After discussing it with the lead artist, we chose a cylindrical form.</span></p>
-</div>
-<div class="project typing">
-    <img src="Website photos/prototype.png"
-         height="385"
-         width="auto"
-         class="portrait zoomable"
-         loading="lazy"
-         decoding="async"/>
-    <p class="typing"><span>Here is the prototype I made for the health pickup. I wanted it to look a bit futuristic, perhaps with visible wiring. OSF stands for Operation Starfall.</span></p>
-</div>
-<div class="project typing">
-    <img src="Website photos/HPPickupModel.png"
-         height="574"
-         width="auto"
-         class="portrait zoomable"
-         loading="lazy"
-         decoding="async"/>
-    <p class="typing"><span>Here is the final model I made for the health pickup. The model was created in Blender, the textures were made in Adobe Substance 3D Painter, and I used shaders to give it a slightly cartoonish look and make the red in the middle behave like liquid.</span></p>
+
+	//private readonly HashSet&lt;IFearStageReceiver&gt; _registeredReceivers = new();
+
+	private readonly List&lt;IFearStageReceiver&gt; _receivers = new();
+
+	/// &lt;summary&gt;
+	///    Global access to the active fear stage provider in the current scene.
+	/// &lt;/summary&gt;
+	public static FearStageProvider Instance { get; private set; }
+
+	/// &lt;summary&gt;The currently active fear stage.&lt;/summary&gt;
+	public FearStage Stage => _stage;
+
+	/// &lt;summary&gt;
+	/// Initializes the singleton instance for this scene.
+	/// Destroys this object if another provider instance already exists.
+	/// &lt;/summary&gt;
+	private void Awake()
+	{
+		if (Instance != null && Instance != this)
+		{
+			Destroy(gameObject);
+			return;
+		}
+
+		Instance = this;
+
+		DontDestroyOnLoad(gameObject);
+
+	}
+
+	/// &lt;summary&gt;
+	/// Cleans up the singleton instance reference if this provider is destroyed.
+	/// &lt;/summary&gt;
+	private void OnDestroy()
+	{
+		if (Instance == this)
+			Instance = null;
+	}
+
+	/// &lt;summary&gt;
+	/// Registers a receiver and immediately applies the current stage so it stays in sync.
+	/// &lt;/summary&gt;
+	/// &lt;param name="receiver"&gt;Receiver instance to register.&lt;/param&gt;
+                    public void Register(IFearStageReceiver receiver)
+	{
+		if (receiver == null)
+		{
+			Debug.LogWarning("[FearStageProvider] Attempted to register a null receiver.", this);
+			return;
+		}
+
+		_receivers.Add(receiver);
+		receiver.ApplyEffectsForStage(_stage);
+	}
+
+	/// &lt;summary&gt;
+	/// Unregisters a receiver so it no longer receives stage updates.
+	/// &lt;/summary&gt;
+	/// &lt;param name="receiver"&gt;Receiver instance to unregister.&lt;/param&gt;
+                    public void Unregister(IFearStageReceiver receiver)
+	{
+		if (receiver == null)
+		{
+			Debug.LogWarning("[FearStageProvider] Attempted to unregister a null receiver.", this);
+			return;
+		}
+
+		_receivers.Remove(receiver);
+	}
+
+	/// &lt;summary&gt;
+	/// Sets the fear stage to &lt;paramref name="newStage"/&gt; and notifies all receivers.
+	/// Does nothing if &lt;paramref name="newStage"/&gt; is already active.
+	/// &lt;/summary&gt;
+	/// &lt;param name="newStage"&gt;The stage to transition to.&lt;/param&gt;
+                    public void SetStage(FearStage newStage)
+	{
+		// Skip if the new stage is the same as the current one to avoid redundant updates.
+		if (_stage == newStage)
+			return;
+
+		_stage = newStage;
+		ApplyToReceivers(_stage);
+	}
+
+	/// &lt;summary&gt;
+	/// Advances the fear stage by one step (for example None to Low to Mid to Max).
+	/// Does nothing when already at &lt;see cref="FearStage.Max"/&gt;.
+	/// &lt;/summary&gt;
+	public void IncreaseStage()
+	{
+		if (_stage < FearStage.Max)
+			SetStage((FearStage)((byte)_stage + 1));
+		else
+			Debug.LogWarning($"[FearStageProvider] Cannot increase stage — already at maximum ({_stage}).", this);
+	}
+
+	/// &lt;summary&gt;
+	/// Reduces the fear stage by one step (for example Max to Mid to Low to None).
+	/// Does nothing when already at &lt;see cref="FearStage.None"/&gt;.
+	/// &lt;/summary&gt;
+	public void DecreaseStage()
+	{
+		if (_stage > FearStage.None)
+			SetStage((FearStage)((byte)_stage - 1));
+		else
+			Debug.LogWarning($"[FearStageProvider] Cannot decrease stage — already at minimum ({_stage}).", this);
+	}
+
+	/// &lt;summary&gt;
+	/// Forwards &lt;paramref name="stage"/&gt; to all currently registered receivers.
+	/// &lt;/summary&gt;
+	/// &lt;param name="stage"&gt;Fear stage to apply.&lt;/param&gt;
+                    private void ApplyToReceivers(FearStage stage)
+	{
+		// Notify all valid receivers of the stage change.
+		foreach (IFearStageReceiver receiver in _receivers)
+			receiver.ApplyEffectsForStage(stage);
+	}
+}
+</code></pre>
+    </div>
 </div>
 
 <nav>

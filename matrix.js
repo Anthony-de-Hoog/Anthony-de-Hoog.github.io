@@ -34,13 +34,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            // Reveal images and remove any uploading helper
-            document.querySelectorAll('.project img').forEach((img) => {
-                const prev = img.previousElementSibling;
-                if (prev && typeof prev.textContent === 'string' && prev.textContent.startsWith('Uploading image')) {
+            // Reveal project media and remove any uploading helper
+            document.querySelectorAll('.project img, .project video').forEach((media) => {
+                const prev = media.previousElementSibling;
+                if (
+                    prev &&
+                    typeof prev.textContent === 'string' &&
+                    (prev.textContent.startsWith('Uploading image') || prev.textContent.startsWith('Uploading media'))
+                ) {
                     prev.remove();
                 }
-                img.classList.add('loaded');
+                media.classList.add('loaded');
             });
 
             // Reveal prompt/input if present
@@ -140,12 +144,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Continue typing flow
                     callback();
 
-                    // Fallback: if image wasn't started yet, start it once
+                    // Fallback: if media wasn't started yet, start it once
                     const projectDiv = element.closest(".project");
                     if (projectDiv && !projectDiv.dataset.imageStarted) {
                         projectDiv.dataset.imageStarted = "true";
-                        const imgElement = projectDiv.querySelector("img");
-                        if (imgElement) uploadImage(imgElement);
+                        const mediaElement = projectDiv.querySelector("img, video");
+                        if (mediaElement) uploadMedia(mediaElement);
                     }
                 }, pauseDuration);
             }
@@ -174,12 +178,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const text = element.getAttribute("data-text") || element.textContent || "";
         element.innerHTML = "";
 
-        // Start image upload the first time we type anything in this project
+        // Start media upload the first time we type anything in this project
         const projectDiv = element.closest(".project");
         if (projectDiv && !projectDiv.dataset.imageStarted) {
             projectDiv.dataset.imageStarted = "true";
-            const imgElement = projectDiv.querySelector("img");
-            if (imgElement) uploadImage(imgElement); // begins progress while text types
+            const mediaElement = projectDiv.querySelector("img, video");
+            if (mediaElement) uploadMedia(mediaElement); // begins progress while text types
         }
 
         if (reducedMotion || currentSpeedName === "turbo" || fastForwardHeld) {
@@ -246,16 +250,20 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Reveal all project images and remove any pending "Uploading image…" helpers
+        // Reveal all project media and remove any pending upload helpers
         document.querySelectorAll(".project").forEach((project) => {
             project.dataset.imageStarted = "true";
-            const img = project.querySelector("img");
-            if (img) {
-                const prev = img.previousElementSibling;
-                if (prev && typeof prev.textContent === "string" && prev.textContent.startsWith("Uploading image")) {
+            const media = project.querySelector("img, video");
+            if (media) {
+                const prev = media.previousElementSibling;
+                if (
+                    prev &&
+                    typeof prev.textContent === "string" &&
+                    (prev.textContent.startsWith("Uploading image") || prev.textContent.startsWith("Uploading media"))
+                ) {
                     prev.remove();
                 }
-                img.classList.add("loaded");
+                media.classList.add("loaded");
             }
         });
 
@@ -271,49 +279,90 @@ document.addEventListener("DOMContentLoaded", function () {
         saveSnapshot();
     }
 
-    function uploadImage(imgElement, { instant = false } = {}) {
-        if (!imgElement || !imgElement.src) {
-            console.error("Image element or source missing:", imgElement);
+    function uploadMedia(mediaElement, { instant = false } = {}) {
+        if (!mediaElement) {
+            console.error("Media element missing:", mediaElement);
             return;
         }
 
-        // Add uploading helper below the image placeholder
+        const isVideo = mediaElement.tagName === "VIDEO";
+        const source =
+            isVideo
+                ? mediaElement.currentSrc ||
+                  mediaElement.getAttribute("src") ||
+                  (mediaElement.querySelector("source") && mediaElement.querySelector("source").src)
+                : mediaElement.src;
+
+        if (!source) {
+            console.error("Media source missing:", mediaElement);
+            return;
+        }
+
+        // Add uploading helper below the media placeholder
         const loadingText = document.createElement("div");
-        loadingText.textContent = "Uploading image █░░░░░░░░░ 10%";
+        loadingText.textContent = "Uploading media █░░░░░░░░░ 10%";
         loadingText.style.color = "#00ff00";
         loadingText.style.marginTop = "10px";
         loadingText.style.fontSize = "14px";
-        imgElement.before(loadingText);
+        mediaElement.before(loadingText);
 
         if (instant) {
             loadingText.remove();
-            imgElement.classList.add("loaded");
+            mediaElement.classList.add("loaded");
             return;
         }
 
-        const imgTest = new Image();
-        imgTest.src = imgElement.src;
-        imgTest.onload = function () {
+        const onReady = function () {
             let progress = 10;
             const interval = setInterval(() => {
                 progress += 10;
-                loadingText.textContent = `Uploading image ${"█".repeat(progress / 10)}${"░".repeat(
+                loadingText.textContent = `Uploading media ${"█".repeat(progress / 10)}${"░".repeat(
                     10 - progress / 10
                 )} ${progress}%`;
                 if (progress >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
                         loadingText.remove();
-                        imgElement.classList.add("loaded");
+                        mediaElement.classList.add("loaded");
                     }, 300);
                 }
             }, 200);
         };
 
-        imgTest.onerror = function () {
-            console.error("Failed to load image:", imgElement.src);
-            loadingText.textContent = "Error loading image ❌";
+        const onError = function () {
+            console.error("Failed to load media:", source);
+            loadingText.textContent = "Error loading media";
         };
+
+        if (!isVideo) {
+            const imgTest = new Image();
+            imgTest.onload = onReady;
+            imgTest.onerror = onError;
+            imgTest.src = source;
+            return;
+        }
+
+        if (mediaElement.readyState >= 2) {
+            onReady();
+            return;
+        }
+
+        const handleVideoReady = () => {
+            mediaElement.removeEventListener("loadeddata", handleVideoReady);
+            mediaElement.removeEventListener("canplay", handleVideoReady);
+            mediaElement.removeEventListener("error", handleVideoError);
+            onReady();
+        };
+        const handleVideoError = () => {
+            mediaElement.removeEventListener("loadeddata", handleVideoReady);
+            mediaElement.removeEventListener("canplay", handleVideoReady);
+            mediaElement.removeEventListener("error", handleVideoError);
+            onError();
+        };
+
+        mediaElement.addEventListener("loadeddata", handleVideoReady, { once: true });
+        mediaElement.addEventListener("canplay", handleVideoReady, { once: true });
+        mediaElement.addEventListener("error", handleVideoError, { once: true });
     }
 
     // Unconditionally attempt restore BEFORE preparing spans

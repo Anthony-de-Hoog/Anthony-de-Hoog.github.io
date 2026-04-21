@@ -113,9 +113,20 @@ ul {
     transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
+.project video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 1100px;
+    border-radius: 6px;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
 /* Portrait images: smaller default size, overrides generic project image sizing */
 .project img.portrait,
-img.portrait {
+.project video.portrait,
+img.portrait,
+video.portrait {
     width: 100%;
     max-width: 420px; /* adjust as needed */
     height: auto;
@@ -125,7 +136,9 @@ img.portrait {
 /* Prevent overflow on small screens */
 @media (max-width: 520px) {
     .project img.portrait,
-    img.portrait {
+    .project video.portrait,
+    img.portrait,
+    video.portrait {
         max-width: 85vw;
     }
 }
@@ -157,12 +170,14 @@ body.lightbox-open {
 }
 
 /* FIX: only hide before the .loaded class is applied */
-html.js .project img:not(.loaded) {
+html.js .project img:not(.loaded),
+html.js .project video:not(.loaded) {
     opacity: 0;
     transform: translateY(12px);
 }
 
-.project img.loaded {
+.project img.loaded,
+.project video.loaded {
     opacity: 1;
     transform: translateY(0);
 }
@@ -231,13 +246,18 @@ html.js .project img:not(.loaded) {
     font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
     line-height: 1.5;
-    inline-size: 500px;
+    inline-size: min(100%, 900px);
+    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.25), inset 0 0 24px rgba(0, 255, 0, 0.06);
 }
 
 .code-snippet code {
     color: #00ff00;
     display: block;
     white-space: pre;
+}
+
+.code-snippet pre {
+    margin: 0;
 }
 
 .code-snippet .code-comment {
@@ -254,4 +274,13 @@ html.js .project img:not(.loaded) {
     font-size: 14px;
     margin-bottom: 8px;
     font-weight: bold;
+    border-bottom: 1px solid #008800;
+    padding-bottom: 6px;
+}
+
+@media (max-width: 620px) {
+    .code-snippet {
+        font-size: 12px;
+        padding: 10px;
+    }
 }
